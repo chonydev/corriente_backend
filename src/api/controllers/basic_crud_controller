@@ -1,0 +1,144 @@
+export default class BasicCRUDController {
+  BasicCRUDService;
+  constructor(basic_crud_service) {
+    this.BasicCRUDService = basic_crud_service;
+  }
+
+  // ------------------------------------------------
+  // ------------------------ Single item queries
+  // ------------------------------------------------
+  /*
+  WARNINGS and PENDINGS
+  ^ logs
+  ^ error handler using next
+  ^ async getById(req, res, next) {}
+  */
+
+  getAll = async (req, res, next) => {
+    //^ logs_req(req)
+    try {
+      const items = await this.BasicCRUDService.getAll();
+      if (!items.length) {
+        console.log('\nitem controller err');
+        return res.status(404).json({ message: 'Items not found' });
+      }
+      res.json(items);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err)
+    }
+  }
+
+  getById = async (req, res, next) => {
+    const id = req.params.id
+    try {
+      const item = await this.BasicCRUDService.getById(id);
+      if (!item.length) {
+        return res.status(404).json({ message: 'Item by id not found' });
+      }
+      res.json(item);
+    } catch (err) {
+      //next(err);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  create = async (req, res, next) => {
+    const input = req.body
+    try {
+      const newItem = await this.BasicCRUDService.create(input);
+      //^ one
+      if (!newItem.length) return res.status(409).json({ message: 'Item not added' });
+      res.status(201).json(newItem);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+  update = async (req, res, next) => {
+    const obj = req.body;
+    try {
+      const editedItem = await this.BasicCRUDService.update(obj);
+      if (!editedItem.length) return res.status(409).json({ message: 'Item not edited.' });
+      res.status(201).json(editedItem);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+  delete = async (req, res, next) => {
+    const id = req.params.id
+    try {
+      const deletedItem = await this.BasicCRUDService.delete(id);
+      if (!Number(deletedItem)) {
+        return res.status(202).json({ message: 'Item not found for deletion.' });
+      }
+      res.status(204).json(deletedItem);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+  // ------------------------------------------------
+  // ------------------------ Bulk queries
+  // ------------------------------------------------
+  /*
+  WARNINGS and PENDINGS
+  ^ info retrieved
+  */
+
+  bulkGet = async (req, res, next) => {
+    const ids = req.body;
+    try {
+      const items = await this.BasicCRUDService.bulkGet(ids);
+      //^ Warning for not found items
+      if (!items.length) {
+        return res.status(404).json({ message: 'Items by id not found' });
+      }
+      res.json(items);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+  bulkCreate = async (req, res, next) => {
+    const items = req.body
+    try {
+      const newItems = await this.BasicCRUDService.bulkCreate(items);
+      if (!newItems.length) return res.status(409).json({ message: 'Items not created' });
+      res.status(201).json(newItems);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+  bulkUpdate = async (req, res, next) => {
+    const items = req.body
+    try {
+      const editedItems = await this.BasicCRUDService.bulkUpdate(items);
+      if (!editedItems.length) return res.status(409).json({ message: 'Items not updated' });
+      res.status(201).json(editedItems);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+  bulkDelete = async (req, res, next) => {
+    const items = req.body
+    try {
+      const deletedItems = await this.BasicCRUDService.bulkDelete(items);
+      if (!deletedItems) return res.status(409).json({ message: 'Items not deleted' });
+      res.status(201).json({message: `${deletedItems} items deleted`});
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+      //next(err);
+    }
+  }
+
+};
