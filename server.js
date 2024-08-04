@@ -1,29 +1,13 @@
 import express from 'express'
-//const express = require('express');
-
 const PORT = process.env.PORT || 3001;
 //const cors = require('cors')
+import wrapperRouter from "./src/api/routes/main_route.js"
+import apiConfig from './src/constants/api_const.js';
 
 const app = express();
-
-app.use(express.json()); // For parsing application/json
-
-//require('./config/routes-config')(app)
-
-
-import routes from './config/routes_config.js';
-try {
-    routes(app);
-}
-catch(err) {
-    console.log(err)
-}
-
-
-
-//import {DEVENV} from './constants/knex_const.cjs';
-//console.log(DEVENV)
-  
+app.use(express.json());
+app.use(`${apiConfig.urlapi}`, wrapperRouter)
+ 
 if (process.platform == "win32") {
     app.listen(PORT, () => {
         console.log(`Detectado Sistema Operativo: win32`);
