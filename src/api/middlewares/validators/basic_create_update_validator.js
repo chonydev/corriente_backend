@@ -21,7 +21,7 @@ export default class ValidatorGenerator {
     this.bulkCreateObjSchema = Joi.array().items(this.createObjSchema).unique();
     this.bulkUpdateObjSchema = Joi.array().items(this.updateObjSchema).unique();
   }
-
+//^ params
   createValidator = (req, res, next) => {
     const result = this.createObjSchema.validate(req.body);
     if (result.error) {

@@ -45,6 +45,7 @@ export default class BasicCRUDController {
 
   create = async (req, res, next) => {
     const input = req.body
+    console.log(input)
     try {
       const newItem = await this.BasicCRUDService.create(input);
       //^ one

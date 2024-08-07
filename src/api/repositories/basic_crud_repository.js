@@ -16,7 +16,9 @@ export default class BasicCRUDRepo {
   }
 
   async create(data) {
-    const id = await knex(this.table).insert(data).onConflict().ignore() // .returning('id'); // mysql not implemented
+    console.log(data)
+    const [id] = await knex(this.table).insert(data).onConflict().ignore() // .returning('id'); // mysql not implemented
+    console.log()
     return await this.getById(id);
   }
 
