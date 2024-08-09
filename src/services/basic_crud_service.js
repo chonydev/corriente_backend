@@ -16,12 +16,11 @@ export default  class BasicCRUDService {
   }
 
   async create(data) {
-    
     return await this.crudRepo.create(data)
   }
 
-  async update(id, data) {
-    return await this.crudRepo.update(id, data)
+  async update(data) {
+    return await this.crudRepo.update(data)
   }
 
   async delete(id) {

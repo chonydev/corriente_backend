@@ -12,7 +12,7 @@ export default class BasicCRUDRepo {
   }
 
   async getById(id) {
-    return await knex(this.table).where({ id });
+    return await knex(this.table).where({ id }).first();
   }
 
   async create(data) {

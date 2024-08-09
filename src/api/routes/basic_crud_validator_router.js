@@ -5,10 +5,17 @@ import BasicCRUDController from '../controllers/basic_crud_controller';
 import { idsValidator, idValidator } from '../middlewares/validators/id_validator.js';
 import ValidatorGenerator from '../middlewares/validators/basic_create_update_validator.js';
 
+import authTokenMw from '../middlewares/authentication_middleware.js';
+
 export default class BasicRouter {
   tableName;
   mainProp;
   router;
+
+  validator;
+  repository;
+  service;
+  controller;
 
   constructor(tableName, mainProp) {
     this.tableName = tableName;
@@ -22,14 +29,18 @@ export default class BasicRouter {
     const repository = new BasicCRUDRepo(this.tableName);
     const service = new BasicCRUDService(repository);
     const controller = new BasicCRUDController(service);
+    this.validator =  validator;
+    this.repository =   repository;
+    this.service =   service;
+    this.controller =   controller;
 
     this.router.route('')
-      .get(controller.getAll)
+        .get(controller.getAll)
       .post(validator.createValidator, controller.create)
       .put(validator.updateValidator, controller.update);
 
     this.router.route('/byid/:id')
-      .get(idValidator, controller.getById)
+      .get(authTokenMw, idValidator, controller.getById)
       .delete(idValidator, controller.delete);
 
     this.router.route('/bulk')
