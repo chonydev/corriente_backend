@@ -8,7 +8,7 @@ export default class ValidatorGenerator {
   updateObjSchema;
   bulkCreateObjSchema;
   bulkUpdateObjSchema;
-
+//^ main prop string from table
   constructor(name) {
     this.name = name;
     this.createObjSchema = Joi.object({
@@ -18,6 +18,7 @@ export default class ValidatorGenerator {
       id: idPropSchema,
       [`${this.name}`]: namePropSchema
     });
+    //^ unique ??
     this.bulkCreateObjSchema = Joi.array().items(this.createObjSchema).unique();
     this.bulkUpdateObjSchema = Joi.array().items(this.updateObjSchema).unique();
   }

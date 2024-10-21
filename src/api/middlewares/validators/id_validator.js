@@ -37,7 +37,8 @@ const idsSchema = Joi.object({
 */
 const idsValidator = (req, res, next) => {
   const result = idsPropSchema.validate(req.body)
- 
+  console.log('-------------- idsvalidator result');
+  
   console.log(result);
   if (!!result.error) {
     console.log(result.error)

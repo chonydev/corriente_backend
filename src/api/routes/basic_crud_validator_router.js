@@ -6,6 +6,9 @@ import { idsValidator, idValidator } from '../middlewares/validators/id_validato
 import ValidatorGenerator from '../middlewares/validators/basic_create_update_validator.js';
 
 import authTokenMw from '../middlewares/authentication_middleware.js';
+//import { authoMw } from '../middlewares/authorization_middleware.js';
+import Authorizator from '../middlewares/authorizator_class.js';
+import authorizator_schemas from '../middlewares/authorizator_schemas.js';
 
 export default class BasicRouter {
   tableName;
@@ -29,26 +32,45 @@ export default class BasicRouter {
     const repository = new BasicCRUDRepo(this.tableName);
     const service = new BasicCRUDService(repository);
     const controller = new BasicCRUDController(service);
+    
     this.validator =  validator;
     this.repository =   repository;
     this.service =   service;
     this.controller =   controller;
 
+    const authoMw = new Authorizator(this.tableName, authorizator_schemas).authoMw
+    
     this.router.route('')
-        .get(controller.getAll)
-      .post(validator.createValidator, controller.create)
-      .put(validator.updateValidator, controller.update);
+      .get(authTokenMw, authoMw, controller.getAll)
+      .post(authTokenMw, authoMw, validator.createValidator, controller.create)
+      .put(authTokenMw, authoMw, controller.update);
 
-    this.router.route('/byid/:id')
-      .get(authTokenMw, idValidator, controller.getById)
-      .delete(idValidator, controller.delete);
+    this.router.route('/byid/:id') //^ name instead of id (security and readability)
+      .get(authTokenMw, authoMw, idValidator, controller.getById)
+      .delete(authTokenMw, authoMw, idValidator, controller.delete);
 
     this.router.route('/bulk')
-      .get(idsValidator, controller.bulkGet)
-      .post(validator.bulkCreateValidator, controller.bulkCreate)
-      .put(validator.bulkUpdateValidator, controller.bulkUpdate)
-      .delete(idsValidator, controller.bulkDelete);
+      .get(authTokenMw, authoMw, idsValidator, controller.bulkGet)
+      .post(authTokenMw, authoMw, validator.bulkCreateValidator, controller.bulkCreate)
+      .put(authTokenMw, authoMw, validator.bulkUpdateValidator, controller.bulkUpdate)
+      .delete(authTokenMw, authoMw, idsValidator, controller.bulkDelete);
   }
+
+  /*
+  this.router.route('')
+      .get(authTokenMw, authoMw, controller.getAll)
+      .post(authTokenMw, authoMw, validator.createValidator, controller.create)
+      .put(authTokenMw, authoMw, validator.updateValidator, controller.update);
+
+    this.router.route('/byid/:id')
+      .get(authTokenMw, authoMw, idValidator, controller.getById)
+      .delete(authTokenMw, authoMw, idValidator, controller.delete);
+
+    this.router.route('/bulk')
+      .get(authTokenMw, authoMw, idsValidator, controller.bulkGet)
+      .post(authTokenMw, authoMw, validator.bulkCreateValidator, controller.bulkCreate)
+      .put(authTokenMw, authoMw, validator.bulkUpdateValidator, controller.bulkUpdate)
+      .delete(authTokenMw, authoMw, idsValidator, controller.bulkDelete);*/
 
   getRouter() {
     return this.router;

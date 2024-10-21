@@ -1,9 +1,11 @@
 export default  class BasicCRUDService {
   //private crudRepo: crudRepo;
   crudRepo;
+  table;
 
   constructor(crudRepo) {
       this.crudRepo = crudRepo;
+      this.table = crudRepo.table;
   }
 
 //async getAll() : Promise<modelRef[]> {
@@ -11,16 +13,34 @@ export default  class BasicCRUDService {
     return await this.crudRepo.getAll();
   }
   
-  async getById(id) {
-    return await this.crudRepo.getById(id)
+  async getById(id, allowedFields) {
+    return await this.crudRepo.getById(id, allowedFields)
   }
 
   async create(data) {
     return await this.crudRepo.create(data)
   }
 
-  async update(data) {
-    return await this.crudRepo.update(data)
+  async update(data_plus_session) {
+    console.log('\n\n ------------------- UPDATE SERVICE')
+    console.log(data_plus_session)
+
+    const { session, ...data } = data_plus_session;
+
+    //if(this.tableName === 'users') {
+/*      const filteredData =  {id: data.id, accountRole: data.accountRole, accountState: data.accountState}
+      console.log('\n\nfilteredData')
+      console.log(filteredData)
+      console.log(data)
+      
+      if(data.id !== session.id) {
+        //^ accountState === 'active'
+        return 'forbidden'
+      }      
+      */
+
+      return await this.crudRepo.update(data)  
+    //}
   }
 
   async delete(id) {
@@ -32,8 +52,8 @@ export default  class BasicCRUDService {
   // ------------------------------------------------
 
 
-  async bulkGet(ids) {
-    return await this.crudRepo.bulkGet(ids)
+  async bulkGet(ids, allowed_fields) {
+    return await this.crudRepo.bulkGet(ids, allowed_fields)
   }
 
   async bulkCreate(items) {

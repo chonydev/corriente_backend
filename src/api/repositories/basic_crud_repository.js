@@ -11,8 +11,11 @@ export default class BasicCRUDRepo {
     return await knex(this.table).select('*');
   }
 
-  async getById(id) {
-    return await knex(this.table).where({ id }).first();
+  async getById(id, allowedFields) {
+    console.log('\n\n --------------------- REPO id, allowed_fields')
+    console.log(id, allowedFields)
+    //return await knex(this.table).where({ id }).first();
+    return await knex(this.table).select(allowedFields).where({ id }).first();
   }
 
   async create(data) {
@@ -23,8 +26,13 @@ export default class BasicCRUDRepo {
   }
 
   async update(dataObject) {
+    console.log('\n\n ------------------- update repo')
+    console.log(dataObject)
     const { id, ...updateData } = dataObject
-    await knex(this.table).where({ id }).update(updateData);
+    console.log(id, updateData )
+    await knex(this.table)
+    .update(updateData)
+    .where({ id });
     return await this.getById(id);
   }
 
@@ -41,8 +49,10 @@ export default class BasicCRUDRepo {
   */
 
 
-  async bulkGet(ids) {
-    return await knex(this.table).whereIn('id', ids);
+  async bulkGet(ids, allowed_fields) {
+    console.log('\n\n --------------------- REPO ids, allowed_fields')
+    console.log(ids, allowed_fields)
+    return await knex(this.table).select(allowed_fields).whereIn('id', ids);
   }
 
   async bulkCreate(data) {

@@ -1,7 +1,9 @@
 export default class BasicCRUDController {
   BasicCRUDService;
+  table;
   constructor(basic_crud_service) {
     this.BasicCRUDService = basic_crud_service;
+    this.table = basic_crud_service.table;
   }
 
   // ------------------------------------------------
@@ -31,10 +33,20 @@ export default class BasicCRUDController {
 
   getById = async (req, res, next) => {
     const id = req.params.id
-    console.log('this.BasicCRUDService')
+    console.log('\n\n------------------this.BasicCRUDService')
     console.log(this.BasicCRUDService.getById)
+/*
+    console.log('\n---------------this')
+    console.log(this)
+    console.log('\n---------------req.route')
+    console.log(Object.keys(req.route))
+    console.log(req.route.path)
+    console.log(req.route.stack[0])
+    console.log(req.route.methods)
+    return res.status(404).json({ message: 'TEST' });
+*/
     try {
-      const item = await this.BasicCRUDService.getById(id);
+      const item = await this.BasicCRUDService.getById(id, req.user.allowedFields);
       if (!item.id) {
         return res.status(404).json({ message: 'Item by id not found' });
       }
@@ -76,9 +88,31 @@ export default class BasicCRUDController {
 
   update = async (req, res, next) => {
     const obj = req.body;
+    console.log('\n\n ------------------- update controller objpayload req.user')
+    console.log(obj)
+    console.log(req.user)
+
+    //^ PENDING authorization granularity
+    let user = {id: req.user.userId, accountRole: req.user.accountRole, accountState: req.user.accountState}
     try {
-      const editedItem = await this.BasicCRUDService.update(obj);
-      if (!editedItem.length) return res.status(409).json({ message: 'Item not edited.' });
+      const editedItem = await this.BasicCRUDService.update({...obj, session: user});
+      console.log('\n\n ------------------- update controller editeditem')
+      console.log(editedItem)
+      /*
+      console.log(Array.isArray(editedItem))
+      console.log(Object.keys(editedItem).length > 0)
+      */
+    
+      //^ PENDING better approach ? conditions management set aside ?
+      if (editedItem.constructor.name === 'Object') {
+        if(Object.keys(editedItem).length === 0){return res.status(409).json({ message: 'Item not edited.' });}
+      }
+      if(Array.isArray(editedItem)) {
+        if(editedItem.length === 0) {return res.status(409).json({ message: 'Item not edited.' });}
+      }
+      
+      //if(editedItem === 'forbidden') {return res.status(403).json({ message: 'Not allowed to change other users data' });}
+
       res.status(201).json(editedItem);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -110,8 +144,9 @@ export default class BasicCRUDController {
 
   bulkGet = async (req, res, next) => {
     const ids = req.body;
+    const allowed_fields = req.user.allowedFields
     try {
-      const items = await this.BasicCRUDService.bulkGet(ids);
+      const items = await this.BasicCRUDService.bulkGet(ids, allowed_fields);
       //^ Warning for not found items
       if (!items.length) {
         return res.status(404).json({ message: 'Items by id not found' });
