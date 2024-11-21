@@ -1,6 +1,6 @@
 import UserController from '../controllers/user_controller.js';
 import UserRepo from '../repositories/user_repository.js';
-import UserService from '../../services/user_service.js';
+import UserService from '../services/user_service.js';
 import BasicRouter from './basic_crud_validator_router.js';
 import { comparePassword, hashPassword } from '../../utils/auth.js';
 
@@ -32,6 +32,15 @@ export default class UserRouter extends BasicRouter {
     this.repository = new UserRepo(this.tableName);
     this.service = new UserService(this.repository);
     this.controller = new UserController(this.service);
+
     this.router.post('/login', this.controller.login);
+    this.router.post('/signup', this.controller.signup);
+    
+    this.router.get('/tokenVerification', this.controller.tokenVerification);
+    /*
+
+    this.router.post('/password_reset', this.controller.password_reset);
+    */
   }
 }
+

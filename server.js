@@ -1,10 +1,19 @@
 import express from 'express'
 const PORT = process.env.PORT || 3001;
-//const cors = require('cors')
+import cors from 'cors'; //const cors = require('cors')
 import wrapperRouter from "./src/api/routes/main_route.js"
 import apiConfig from './src/constants/api_const.js';
 
+
 const app = express();
+
+const cors_config = {
+    origin: 'http://localhost:4200'
+}
+
+app.use(cors(cors_config));
+
+
 app.use(express.json());
 app.use(`${apiConfig.urlapi}`, wrapperRouter)
  

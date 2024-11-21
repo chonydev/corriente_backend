@@ -1,4 +1,4 @@
-export default  class BasicCRUDService {
+export default class BasicCRUDService {
   //private crudRepo: crudRepo;
   crudRepo;
   table;
@@ -38,8 +38,15 @@ export default  class BasicCRUDService {
         return 'forbidden'
       }      
       */
+      const { id, ...updateData } = data
+      
+      console.log(id, updateData)
 
-      return await this.crudRepo.update(data)  
+      if(Object.keys(updateData).length === 0 ) {
+        return 'Empty update data'
+      }
+
+      return await this.crudRepo.update(updateData)  
     //}
   }
 

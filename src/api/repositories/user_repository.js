@@ -6,7 +6,6 @@ export default class UserRepo extends BasicCRUDRepo {
     console.log(value)
     console.log(this.table)
     return await knex(this.table).where({ username: value }).first(); //  .orWhere({ email: });
-
   }
 
 }

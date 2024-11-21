@@ -12,27 +12,36 @@ export default class BasicCRUDRepo {
   }
 
   async getById(id, allowedFields) {
-    console.log('\n\n --------------------- REPO id, allowed_fields')
-    console.log(id, allowedFields)
-    //return await knex(this.table).where({ id }).first();
-    return await knex(this.table).select(allowedFields).where({ id }).first();
+    //^ more programmatic implementation ?
+    if(allowedFields) {
+      console.log('\n\n --------------------- REPO id, allowed_fields')
+      console.log(id, allowedFields)
+      //return await knex(this.table).where({ id }).first();
+      return await knex(this.table).select(allowedFields).where({ id }).first();
+    } else {
+      //^  create a user case (check others)
+      return await knex(this.table).select({username}).where({ id }).first();
+    }
   }
 
   async create(data) {
     console.log(data)
-    const [id] = await knex(this.table).insert(data).onConflict().ignore() // .returning('id'); // mysql not implemented
-    console.log()
-    return await this.getById(id);
+//    const [id] = await knex(this.table).insert(data).onConflict().ignore() // .returning('id'); // mysql not implemented
+    console.log('id from create repo')
+    console.log(8) //?id
+    return await this.getById(8);
   }
 
   async update(dataObject) {
     console.log('\n\n ------------------- update repo')
     console.log(dataObject)
+    /*
     const { id, ...updateData } = dataObject
-    console.log(id, updateData )
+    console.log(id, updateData)
+    */
     await knex(this.table)
-    .update(updateData)
-    .where({ id });
+      .update(updateData)
+      .where({ id });
     return await this.getById(id);
   }
 

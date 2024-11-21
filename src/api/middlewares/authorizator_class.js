@@ -25,8 +25,8 @@ export default class Authorizator {
 
     console.log('\n\n\n --------------  authorizator authoMw -----------------------');
 
-    const is_used_req_body = !['create', 'update', 'bulk'].some(value => operation.includes(value))
-
+    const is_used_req_body = ['create', 'update', 'bulk'].some(value => operation.includes(value))
+    
     const id_requester = Number(req.user.userId)
     let id_requested;
     if(is_used_req_body) {
@@ -37,10 +37,16 @@ export default class Authorizator {
     /*
     console.log(req.params.id)
     console.log(req.user.userId == req.params.id)
-    console.log(id_requester, id_requested)
+    
+    console.log(req.body, req.params) // body empty   req.params {id:4   
+    console.log(id_requester, id_requested) //4 nan
+    console.log(req.user.userId) //4
     */
+    console.log(is_used_req_body)
+    
    console.log(req.user)
    console.log(accountRole, operation)
+
     try {
       const permission = await this.rbac.can(accountRole, operation, {
         //> context needed for the `when` function

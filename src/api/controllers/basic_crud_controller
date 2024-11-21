@@ -45,8 +45,11 @@ export default class BasicCRUDController {
     console.log(req.route.methods)
     return res.status(404).json({ message: 'TEST' });
 */
+  
     try {
       const item = await this.BasicCRUDService.getById(id, req.user.allowedFields);
+      console.log('\n--------------- item from controller getbyid');
+      console.log(item);
       if (!item.id) {
         return res.status(404).json({ message: 'Item by id not found' });
       }
@@ -73,8 +76,8 @@ export default class BasicCRUDController {
   }
 */
   create = async (req, res, next) => {
-    const input = req.body
-    console.log(input)
+    const input = req.body;
+    console.log(input);
     try {
       const newItem = await this.BasicCRUDService.create(input);
       //^ one

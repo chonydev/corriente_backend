@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import BasicCRUDRepo from '../repositories/basic_crud_repository.js';
-import BasicCRUDService from '../../services/basic_crud_service.js';
+import BasicCRUDService from '../services/basic_crud_service.js';
 import BasicCRUDController from '../controllers/basic_crud_controller';
 import { idsValidator, idValidator } from '../middlewares/validators/id_validator.js';
 import ValidatorGenerator from '../middlewares/validators/basic_create_update_validator.js';

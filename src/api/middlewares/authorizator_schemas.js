@@ -43,7 +43,7 @@ const user_fields_over_oneself = [
 
 
   const baseSchema = {
-    user: {
+    user: { 
       can: ['get', 'get:byid']
     },
     mod: {
@@ -61,6 +61,8 @@ const authorizator_schemas = {
   users: {
     user: {
       can: [//['get:byid', 'put', 'get:bulk'] //^ put almost all props ; get fields constraint over others
+        'post:login'
+        ,
         {
           name: 'get:byid',
           when: async (params) => {
