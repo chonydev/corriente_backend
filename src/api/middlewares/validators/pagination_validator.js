@@ -1,6 +1,5 @@
-//const { checkSchema } = require('express-validator');
-
 import { checkSchema } from 'express-validator';
+
 const paginationSchema = {
   offset: {
     optional: true,

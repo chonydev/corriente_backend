@@ -9,8 +9,8 @@ export default class BasicCRUDService {
   }
 
 //async getAll() : Promise<modelRef[]> {
-  async getAll() {
-    return await this.crudRepo.getAll();
+  async getAll(allowedFields) {
+    return await this.crudRepo.getAll(allowedFields);
   }
   
   async getById(id, allowedFields) {

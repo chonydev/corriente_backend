@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { comparePassword, generateToken, hashPassword, verifyToken } from "../../utils/auth.js";
 import BasicCRUDController from "./basic_crud_controller";
+//? 
+import sendPasswordResetEmail from "../services/email_service.js";
 //import {JWT_SECRET}
 
 export default class UserController extends BasicCRUDController {
@@ -120,11 +122,13 @@ export default class UserController extends BasicCRUDController {
 
   tokenVerification = async (req, res, next) => {
     //const result = verifyToken(req.user.token);
-
+    console.log('\nFROM tokenverification')
     const token = req.headers.authorization.slice(7)
     if (token == null) return res.sendStatus(401); //^ add to catch 401 ??
     try {
+      console.log(token)
       const result = verifyToken(token);
+      console.log(result)
       if (Object.keys(result).length > 0) {
         res.status(200).json(true);
       }
@@ -164,6 +168,28 @@ export default class UserController extends BasicCRUDController {
       }
       */
   }
+
+  passwordReset = async (req, res, next) => {
+    const { email } = req.body;
+    try {
+      console.log('\n\n-------------------------- passwordReset')
+      /*
+      console.log(req.body)
+      */
+     
+     const SEND_EMAIL_RES = await sendPasswordResetEmail(email)
+
+      // SEND_EMAIL_RES is never null
+      if (Number(SEND_EMAIL_RES.statusCode) === 202) {
+        res.status(201).json('Email sent successfully');
+      }
+    } catch (err) {
+      console.error('Error in sendPasswordResetEmail:', err);
+      res.status(500).json({ message: 'Failed sending email' });
+      //next(err);
+    }
+  }
+
 
 
 

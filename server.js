@@ -1,21 +1,20 @@
 import express from 'express'
 const PORT = process.env.PORT || 3001;
-import cors from 'cors'; //const cors = require('cors')
+import cors from 'cors';
 import wrapperRouter from "./src/api/routes/main_route.js"
-import apiConfig from './src/constants/api_const.js';
-
+import API_CONFIG from './src/constants/api_const.js';
 
 const app = express();
 
-const cors_config = {
+const CORS_CONFIG = {
     origin: 'http://localhost:4200'
 }
 
-app.use(cors(cors_config));
+app.use(cors(CORS_CONFIG));
 
 
 app.use(express.json());
-app.use(`${apiConfig.urlapi}`, wrapperRouter)
+app.use(`${API_CONFIG.urlapi}`, wrapperRouter)
  
 if (process.platform == "win32") {
     app.listen(PORT, () => {

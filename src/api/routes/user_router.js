@@ -36,10 +36,10 @@ export default class UserRouter extends BasicRouter {
     this.router.post('/login', this.controller.login);
     this.router.post('/signup', this.controller.signup);
     
-    this.router.get('/tokenVerification', this.controller.tokenVerification);
+    this.router.get('/tokenVerification', this.controller.tokenVerification);//^ change to post
+    
+    this.router.post('/password_reset', this.controller.passwordReset);
     /*
-
-    this.router.post('/password_reset', this.controller.password_reset);
     */
   }
 }

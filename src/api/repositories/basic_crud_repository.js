@@ -7,8 +7,22 @@ export default class BasicCRUDRepo {
     this.table = table
   }
 
-  async getAll() {
-    return await knex(this.table).select('*');
+  async getAll(allowedFields) {
+    console.log('\n\n --------------------- REPO id, allowed_fields')
+    console.log(allowedFields)
+    try {
+      if(allowedFields) {
+        console.log(allowedFields)
+        //return await knex(this.table).where({ id }).first();
+        return await knex(this.table).select(allowedFields);
+      } else {
+        //^  create a user case (check others)
+        return await knex(this.table).select('id');
+      }
+    } catch (err) {
+      throw err
+    }
+    //return await knex(this.table).select('*');
   }
 
   async getById(id, allowedFields) {

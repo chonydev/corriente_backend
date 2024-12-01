@@ -1,7 +1,10 @@
 require('dotenv').config();
-//import dotenv from 'dotenv';
-//dotenv.config(); 
-    
+/*
+import dotenv from 'dotenv';
+dotenv.config(); 
+
+export default DEVENV;
+*/ 
 
 const DEVENV = {
     development: {
@@ -24,10 +27,9 @@ const DEVENV = {
         },
         seeds: {
             directory: __dirname + '/knex/seeds'
-        }
+        },
         // S3_URL: 'https://bebe-bucket.s3.us-east-2.amazonaws.com'
     }
 }
 
-//export default DEVENV;
 module.exports = {DEVENV}

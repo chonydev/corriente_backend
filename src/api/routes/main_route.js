@@ -23,6 +23,8 @@ const userRouterI = new UserRouter('users', 'username').getRouter()
 versionMainRoute.use('/users', userRouterI);
 //console.log(userRouterI)
 
+versionMainRoute.use('/signup', militancyGroupsRouter);
+
 /*
 const res = await hashPassword('password111')
 const res2 = await hashPassword('password222')

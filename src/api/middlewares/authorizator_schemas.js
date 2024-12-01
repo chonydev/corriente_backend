@@ -66,7 +66,7 @@ const authorizator_schemas = {
         {
           name: 'get:byid',
           when: async (params) => {
-            if (params.id_requested === params.id_requester) {//^.userId) {
+            if (params.id_requested === params.id_requester) { //^.userId) {
               console.log('\n ------------------------ params.id === params.session.userId)')
               return { fields: user_fields_over_oneself }
             } else {
@@ -88,23 +88,35 @@ const authorizator_schemas = {
             */
         },
         {
+          name: 'get:',
+          when: async () => ({ fields: user_fields_over_other_user})
+          //fields: user_fields_over_other_user
+          },
+
+          //^ when it could be used this get:bulk by a user?
+        /*
+        {
           name: 'get:bulk',
           when: () => true,
           fields: user_fields_over_other_user
         }
+          */
 
       ]
     },
       mod: {
-        can:[],
+        can:[
+
+  
+        ],
         inherits: ['user']
       },
       admin: {
         can: [
           {
             name:'get:byid',
-            when: () => true,
-            fields: user_fields_over_oneself//user_fields_over_oneself.filter(e => !['password'].includes(e))
+            when: () => ({ fields:  user_fields_over_oneself}),
+            //fields: user_fields_over_oneself//user_fields_over_oneself.filter(e => !['password'].includes(e))
           },
           {
             name:'put', // accountState and role
@@ -113,7 +125,7 @@ const authorizator_schemas = {
           },
            'delete:byid', 
            'get:bulk',  // ; get fields constraint over others (user get + st else)     ; //^ password !!!
-            'put:bulk', 'delete:bulk'],
+           'put:bulk', 'delete:bulk'],
         inherits: ['mod']
     }
   },

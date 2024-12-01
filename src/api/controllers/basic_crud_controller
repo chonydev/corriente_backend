@@ -18,15 +18,22 @@ export default class BasicCRUDController {
 
   getAll = async (req, res, next) => {
     //^ logs_req(req)
+    console.log('FROM getAll controller')
+    console.log(req.url)
+    console.log(this.table)
     try {
-      const items = await this.BasicCRUDService.getAll();
+      const items = await this.BasicCRUDService.getAll(req.user.allowedFields);
+      console.log(items)
       if (!items.length) {
         console.log('\nitem controller err');
         return res.status(404).json({ message: 'Items not found' });
       }
+      console.log('controller end')
+      req.user.allowedFields = ['get']
       res.json(items);
     } catch (err) {
       res.status(500).json({ message: err.message });
+      console.error(err);
       //next(err)
     }
   }

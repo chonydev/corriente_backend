@@ -20,16 +20,29 @@ export default class Authorizator {
     const accountRole = req.user.accountRole;
     let operation = req.method.toLowerCase();
     let path = req.route.path;
+    //> possible values:
+    /*
+    get
+      get
+      get byid
+      get bulk
+    put...?
+    post...?
+    delete...?
+    */
+
     if (path.includes('byid')) { operation += ':byid' }
     if (path.includes('bulk')) { operation += ':bulk' }
-
+    if (req.url === '/') { operation += ':' }
     console.log('\n\n\n --------------  authorizator authoMw -----------------------');
 
     const is_used_req_body = ['create', 'update', 'bulk'].some(value => operation.includes(value))
-    
+
     const id_requester = Number(req.user.userId)
     let id_requested;
-    if(is_used_req_body) {
+
+    //^ only one requested id? split into single vs several id requested or is not neccessary??
+    if (is_used_req_body) {
       id_requested = Number(req.body.id)
     } else {
       id_requested = Number(req.params.id)
@@ -41,52 +54,31 @@ export default class Authorizator {
     console.log(req.body, req.params) // body empty   req.params {id:4   
     console.log(id_requester, id_requested) //4 nan
     console.log(req.user.userId) //4
+
     */
+
+    console.log('is_used_req_body')
     console.log(is_used_req_body)
-    
-   console.log(req.user)
-   console.log(accountRole, operation)
+    console.log('req.user')
+    console.log(req.user)
+    console.log('accountRole, operation')
+    console.log(accountRole, operation)
 
     try {
+
       const permission = await this.rbac.can(accountRole, operation, {
         //> context needed for the `when` function
         id_requested: id_requested,//req.params.id,
         id_requester: id_requester//^  req.user,
       });
-
+      console.log(' -------------------------------- permission result CHECKING')
       console.log(permission)
       if (!permission) {
         res.sendStatus(403);
       }
 
-      let allowedFields;
-      if (typeof permission === 'object' && permission.fields) {
-        allowedFields = permission.fields;
-      } else if (typeof permission === 'boolean' && permission) {
-        //> If permission is just true, fetch the fields from the schema
-        allowedFields = this.getFieldsFromSchema(accountRole, operation);
-      }
-      console.log(' -------------- from authorizator allowedfields');
-      console.log(allowedFields)
-      /*
-      ^ im using the req.user to pass in allowed fields 
-      ^ instead of constrain frontend it could be possible to let pass and filter in backend
-      if (allowedFields) {
-        //> Filter request body (or response data based on allowed fields) 
-        //> OR send fields and use them in repo select query
-        const is_used_req_body = !['create', 'update', 'bulk'].some(value => operation.includes(value))
-        //> doesn't modify req.body in cerain cases
-        if(is_used_req_body) {
-          console.log(this.filterObject(req.body, allowedFields))
-          //console.log(Object.keys(this.authoMw.prototype))
-          req.body = this.filterObject(req.body, allowedFields)
-          console.log(' -------------- from authorizator req.body');
-          console.log(req.body)
-        }
-      }
-      //^ get case: it could be changed the res object (i don't see the benefit)
-      */
-      req.user['allowedFields'] = allowedFields
+
+      req.user['allowedFields'] = permission.fields
       console.log('-------------- from authorizator req.user and body');
       console.log(req.user)
       console.log(req.body)
@@ -99,13 +91,32 @@ export default class Authorizator {
 
   getFieldsFromSchema(role, operation) {
     const rolePermissions = this.schemas[this.tableName][role];
+    /*
+    console.log('rolePermissions getfieldsfromschema')
+    console.log(!rolePermissions)
+    console.log(rolePermissions)
+    const rolePermissions2 = this.schemas[this.tableName]['user'];
+    console.log(rolePermissions2)
+    console.log(rolePermissions2.can[3].fields)
+    */
     if (!rolePermissions) return null;
 
-    const permission = rolePermissions.can.find(p => 
-      (typeof p === 'string' && p === operation) || 
-      (typeof p === 'object' && p.name === operation)
+    const permission = rolePermissions.can.find(p =>
+      (typeof p === 'string' && p === 'get') ||
+      (typeof p === 'object' && p.name === 'get')
     );
-
+    /*
+    
+    console.log('permission afeter null')
+    console.log('permission')
+    console.log(permission)
+    console.log(typeof permission)
+    console.log(permission.prototype)
+    
+    */
+    /*
+     console.log(rolePermissions.can.find(p => console.log(p)))
+ */
     return permission && typeof permission === 'object' ? permission.fields : null;
   }
 
